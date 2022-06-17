@@ -60,6 +60,27 @@ struct Vector3D
     {
         return Vector3D(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
     }
+
+    static Vector3D project(const Vector3D &a, const Vector3D &b)
+    {
+        return b * (dotProduct(a, b) / dotProduct(b, b));
+    }
+
+    static Vector3D reject(const Vector3D &a, const Vector3D &b)
+    {
+        return a - project(a, b);
+    }
+
+    // Optimized projection and rejection operations in case b is a unit vector
+    static Vector3D projectOnUnit(const Vector3D &a, const Vector3D &b)
+    {
+        return b * dotProduct(a, b);
+    }
+
+    static Vector3D rejectOnUnit(const Vector3D &a, const Vector3D &b)
+    {
+        return a - projectOnUnit(a, b);
+    }
 };
 
 inline Vector3D operator *(const Vector3D &v, float s)
