@@ -46,26 +46,50 @@ public:
     {
         return (*reinterpret_cast<const Vector3D*>(n[j]));
     }
+
+    static float determinant(const Matrix3D& M)
+    {
+        return M(0,0) * (M(1,1) * M(2,2) - M(1,2) * M(2,1)) +
+               M(0,1) * (M(1,2) * M(2,0) - M(1,0) * M(2,2)) +
+               M(0,2) * (M(1,0) * M(2,1) - M(1,1) * M(2,0));
+    }
+
+    static Matrix3D inverse(const Matrix3D& M)
+    {
+        const Vector3D& a = M[0];
+        const Vector3D& b = M[1];
+        const Vector3D& c = M[2];
+
+        Vector3D r0 = Vector3D::crossProduct(b, c);
+        Vector3D r1 = Vector3D::crossProduct(c, a);
+        Vector3D r2 = Vector3D::crossProduct(a, b);
+
+        float invDet = 1.f / Vector3D::dotProduct(r2, c);
+
+        return Matrix3D(r0.x * invDet, r0.y * invDet, r0.z * invDet,
+                        r1.x * invDet, r1.y * invDet, r1.z * invDet,
+                        r2.x * invDet, r2.y * invDet, r2.z * invDet);
+    }
 };
 
 Matrix3D operator *(const Matrix3D& A, const Matrix3D& B)
 {
-    return (Matrix3D(A(0,0) * B(0,0) + A(0,1) * B(1,0) + A(0,2) * B(2,0),
-                     A(0,0) * B(0,1) + A(0,1) * B(1,1) + A(0,2) * B(2,1),
-                     A(0,0) * B(0,2) + A(0,1) * B(1,2) + A(0,2) * B(2,2),
-                     A(1,0) * B(0,0) + A(1,1) * B(1,0) + A(1,2) * B(2,0),
-                     A(1,0) * B(0,1) + A(1,1) * B(1,1) + A(1,2) * B(2,1),
-                     A(1,0) * B(0,2) + A(1,1) * B(1,2) + A(1,2) * B(2,2),
-                     A(2,0) * B(0,0) + A(2,1) * B(1,0) + A(2,2) * B(2,0),
-                     A(2,0) * B(0,1) + A(2,1) * B(1,1) + A(2,2) * B(2,1),
-                     A(2,0) * B(0,2) + A(2,1) * B(1,2) + A(2,2) * B(2,2)));
+    return Matrix3D(A(0,0) * B(0,0) + A(0,1) * B(1,0) + A(0,2) * B(2,0),
+                    A(0,0) * B(0,1) + A(0,1) * B(1,1) + A(0,2) * B(2,1),
+                    A(0,0) * B(0,2) + A(0,1) * B(1,2) + A(0,2) * B(2,2),
+                    A(1,0) * B(0,0) + A(1,1) * B(1,0) + A(1,2) * B(2,0),
+                    A(1,0) * B(0,1) + A(1,1) * B(1,1) + A(1,2) * B(2,1),
+                    A(1,0) * B(0,2) + A(1,1) * B(1,2) + A(1,2) * B(2,2),
+                    A(2,0) * B(0,0) + A(2,1) * B(1,0) + A(2,2) * B(2,0),
+                    A(2,0) * B(0,1) + A(2,1) * B(1,1) + A(2,2) * B(2,1),
+                    A(2,0) * B(0,2) + A(2,1) * B(1,2) + A(2,2) * B(2,2));
 }
 
 Vector3D operator *(const Matrix3D& M, const Vector3D& v)
 {
-    return (Vector3D(M(0,0) * v.x + M(0,1) * v.y + M(0,2) * v.z,
-                     M(1,0) * v.x + M(1,1) * v.y + M(1,2) * v.z,
-                     M(2,0) * v.x + M(2,1) * v.y + M(2,2) * v.z));
+    return Vector3D(M(0,0) * v.x + M(0,1) * v.y + M(0,2) * v.z,
+                    M(1,0) * v.x + M(1,1) * v.y + M(1,2) * v.z,
+                    M(2,0) * v.x + M(2,1) * v.y + M(2,2) * v.z);
 }
 
 #endif /* MATRIX3D_H */
